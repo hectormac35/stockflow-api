@@ -1,0 +1,56 @@
+### StockFlow API — peticiones de ejemplo (Visual Studio / VS Code REST Client / Rider)
+@host = http://localhost:5080
+
+### Listar productos (incluye datos de ejemplo)
+GET {{host}}/api/products
+
+### Crear un producto
+POST {{host}}/api/products
+Content-Type: application/json
+
+{
+  "sku": "SSD-1TB",
+  "name": "SSD NVMe 1TB",
+  "price": 79.90,
+  "initialStock": 15,
+  "minStock": 5
+}
+
+### Crear un pedido en borrador (cliente 1: 2 portátiles + 2 monitores)
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "customerId": 1,
+  "lines": [
+    { "productId": 1, "quantity": 2 },
+    { "productId": 2, "quantity": 2 }
+  ]
+}
+
+### Confirmar el pedido (descuenta stock en una transacción)
+POST {{host}}/api/orders/1/confirm
+
+### Pedido imposible: 10 docks con solo 3 en stock → 409 Conflict
+POST {{host}}/api/orders
+Content-Type: application/json
+
+{
+  "customerId": 2,
+  "lines": [ { "productId": 5, "quantity": 10 } ]
+}
+
+###
+POST {{host}}/api/orders/2/confirm
+
+### Cancelar un pedido confirmado (devuelve el stock)
+POST {{host}}/api/orders/1/cancel
+
+### Pedidos confirmados, paginados
+GET {{host}}/api/orders?status=Confirmed&page=1&pageSize=10
+
+### Informe de stock bajo
+GET {{host}}/api/reports/low-stock
+
+### Informe de ventas de los últimos 30 días
+GET {{host}}/api/reports/sales
